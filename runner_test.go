@@ -1,3 +1,4 @@
+package mosalat
 
 // func now() int64 { return time.Now().Unix() }
 // func days(count float64) float64 {
