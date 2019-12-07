@@ -28,7 +28,7 @@ func init() {
 	gob.Register(parse.ConditionalExpressionNode{})
 }
 
-func SerilizeAST(m parse.AST) (string, error) {
+func SerializeAST(m parse.AST) (string, error) {
 	b := bytes.Buffer{}
 	e := gob.NewEncoder(&b)
 	err := e.Encode(m)
@@ -38,7 +38,7 @@ func SerilizeAST(m parse.AST) (string, error) {
 	return base64.StdEncoding.EncodeToString(b.Bytes()), nil
 }
 
-func DeSerilizeToAST(str string) (parse.AST, error) {
+func DeSerializeToAST(str string) (parse.AST, error) {
 	m := parse.AST{}
 	by, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
