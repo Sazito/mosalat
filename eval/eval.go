@@ -61,7 +61,7 @@ func New(funcMap, inputMap, outputMap map[string]interface{}) (e *Evaluator, err
 }
 
 func (e *Evaluator) Eval(ast parse.AST) (map[string]interface{}, error) {
-	return e.eval(ast)
+	return e.eval(ast.Node)
 }
 
 func (e *Evaluator) eval(node parse.Node) (res map[string]interface{}, err error) {
@@ -87,6 +87,12 @@ func (e *Evaluator) eval(node parse.Node) (res map[string]interface{}, err error
 func (e *Evaluator) evalEngine(node parse.Node) (map[string]interface{}, error) {
 	switch n := node.(type) {
 	case *parse.EngineNode:
+		for _, nr := range n.Rules {
+			if err := e.evalRuleNode(&nr); err != nil {
+				return nil, err
+			}
+		}
+	case parse.EngineNode:
 		for _, nr := range n.Rules {
 			if err := e.evalRuleNode(&nr); err != nil {
 				return nil, err
@@ -151,22 +157,40 @@ func (e *Evaluator) evalExpression(node parse.Node) (interface{}, error) {
 	switch n := node.(type) {
 	case *parse.ExpressionNode:
 		return e.evalExpression(n.Expression)
+	case parse.ExpressionNode:
+		return e.evalExpression(n.Expression)
 	case *parse.NumberNode:
 		return e.evalNumber(n)
+	case parse.NumberNode:
+		return e.evalNumber(&n)
 	case *parse.StringNode:
 		return e.evalString(n)
+	case parse.StringNode:
+		return e.evalString(&n)
 	case *parse.BoolNode:
 		return e.evalBool(n)
+	case parse.BoolNode:
+		return e.evalBool(&n)
 	case *parse.NotNode:
 		return e.evalNot(n)
+	case parse.NotNode:
+		return e.evalNot(&n)
 	case *parse.IdentifierNode:
 		return e.evalIdentifier(n)
+	case parse.IdentifierNode:
+		return e.evalIdentifier(&n)
 	case *parse.FunctionNode:
 		return e.evalFunction(n)
+	case parse.FunctionNode:
+		return e.evalFunction(&n)
 	case *parse.MathExpressionNode:
 		return e.evalMathExpression(n)
+	case parse.MathExpressionNode:
+		return e.evalMathExpression(&n)
 	case *parse.ConditionalExpressionNode:
 		return e.evalConditionalExpression(n)
+	case parse.ConditionalExpressionNode:
+		return e.evalConditionalExpression(&n)
 	default:
 		return nil, fmt.Errorf("unknown command %T", node)
 	}
