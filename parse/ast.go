@@ -16,7 +16,9 @@ func (p Position) Pos() Position {
 	return p
 }
 
-type AST Node
+type AST struct {
+	Node
+}
 
 type EngineNode struct {
 	Position

@@ -38,7 +38,7 @@ func (p *parser) Parse() (ast AST, err error) {
 	// Parsing uses panics to bubble up errors
 	defer p.recover(&err)
 
-	ast = p.engine()
+	ast.Node = p.engine()
 
 	return
 }
