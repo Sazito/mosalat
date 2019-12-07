@@ -60,21 +60,6 @@ func New(funcMap, inputMap, outputMap map[string]interface{}) (e *Evaluator, err
 	return
 }
 
-func Run(input []string, funcMap, inputMap, outputMap map[string]interface{}) (map[string]interface{}, error) {
-	e := &Evaluator{
-		state: stateMaps{
-			inputMap:  inputMap,
-			outputMap: outputMap,
-			funcMap:   funcMap,
-		},
-	}
-	ast, err := parse.Parse(input, funcMap, inputMap, outputMap)
-	if err != nil {
-		return nil, err
-	}
-	return e.Eval(ast)
-}
-
 func (e *Evaluator) Eval(ast parse.AST) (map[string]interface{}, error) {
 	return e.eval(ast)
 }
