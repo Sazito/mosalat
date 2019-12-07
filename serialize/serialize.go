@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/gob"
-	"fmt"
 
 	"github.com/sazito/mosalat/parse"
 )
@@ -29,28 +28,28 @@ func init() {
 	gob.Register(parse.ConditionalExpressionNode{})
 }
 
-func SerilizeAST(m parse.AST) string {
+func SerilizeAST(m parse.AST) (string, error) {
 	b := bytes.Buffer{}
 	e := gob.NewEncoder(&b)
 	err := e.Encode(m)
 	if err != nil {
-		fmt.Println(`failed gob Encode`, err)
+		return "", err
 	}
-	return base64.StdEncoding.EncodeToString(b.Bytes())
+	return base64.StdEncoding.EncodeToString(b.Bytes()), nil
 }
 
-func DeSerilizeToAST(str string) parse.AST {
+func DeSerilizeToAST(str string) (parse.AST, error) {
 	m := parse.AST{}
 	by, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
-		fmt.Println(`failed base64 Decode`, err)
+		return parse.AST{}, err
 	}
 	b := bytes.Buffer{}
 	b.Write(by)
 	d := gob.NewDecoder(&b)
 	err = d.Decode(&m)
 	if err != nil {
-		fmt.Println(`failed gob Decode`, err)
+		return parse.AST{}, err
 	}
-	return m
+	return m, nil
 }
